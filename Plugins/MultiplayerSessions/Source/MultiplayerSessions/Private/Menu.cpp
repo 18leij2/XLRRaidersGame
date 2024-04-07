@@ -7,6 +7,7 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
+
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
@@ -17,8 +18,7 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	bIsFocusable = true;
 
 	UWorld* World = GetWorld();
-	if (World)
-	{
+	if (World) {
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
 		{
@@ -46,6 +46,25 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	}
 }
 
+
+void UMenu::HostButtonClicked()
+{
+	HostButton->SetIsEnabled(false);
+	if (MultiplayerSessionsSubsystem) 
+	{
+		MultiplayerSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
+	}
+}
+
+void UMenu::JoinButtonClicked()
+{
+	JoinButton->SetIsEnabled(false);
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->FindSessions(10000);
+	}
+}
+
 bool UMenu::Initialize()
 {
 	if (!Super::Initialize())
@@ -57,12 +76,29 @@ bool UMenu::Initialize()
 	{
 		HostButton->OnClicked.AddDynamic(this, &ThisClass::HostButtonClicked);
 	}
+
 	if (JoinButton)
 	{
 		JoinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);
 	}
 
 	return true;
+}
+
+void UMenu::MenuTearDown()
+{
+	RemoveFromParent();
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			FInputModeGameOnly InputModeData;
+			PlayerController->SetInputMode(InputModeData);
+			PlayerController->SetShowMouseCursor(false);
+		}
+	}
 }
 
 void UMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
@@ -75,6 +111,16 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Yellow,
+				FString(TEXT("Session Created Successfully"))
+			);
+		}
+
 		UWorld* World = GetWorld();
 		if (World)
 		{
@@ -89,7 +135,7 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 				-1,
 				15.f,
 				FColor::Red,
-				FString(TEXT("Failed to create session!"))
+				FString(TEXT("Failed to Create Session"))
 			);
 		}
 		HostButton->SetIsEnabled(true);
@@ -103,7 +149,7 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 		return;
 	}
 
-	for (auto Result : SessionResults)
+	for (auto Result : SessionResults) 
 	{
 		FString SettingsValue;
 		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
@@ -112,6 +158,7 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 			MultiplayerSessionsSubsystem->JoinSession(Result);
 			return;
 		}
+
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{
@@ -137,46 +184,19 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 			}
 		}
 	}
+
+	if (Result != EOnJoinSessionCompleteResult::Success)
+	{
+		JoinButton->SetIsEnabled(true);
+	}
 }
 
 void UMenu::OnDestroySession(bool bWasSuccessful)
 {
+
 }
 
 void UMenu::OnStartSession(bool bWasSuccessful)
 {
-}
 
-void UMenu::HostButtonClicked()
-{
-	HostButton->SetIsEnabled(false);
-	if (MultiplayerSessionsSubsystem)
-	{
-		MultiplayerSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
-	}
-}
-
-void UMenu::JoinButtonClicked()
-{
-	JoinButton->SetIsEnabled(false);
-	if (MultiplayerSessionsSubsystem)
-	{
-		MultiplayerSessionsSubsystem->FindSessions(10000);
-	}
-}
-
-void UMenu::MenuTearDown()
-{
-	RemoveFromParent();
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		APlayerController* PlayerController = World->GetFirstPlayerController();
-		if (PlayerController)
-		{
-			FInputModeGameOnly InputModeData;
-			PlayerController->SetInputMode(InputModeData);
-			PlayerController->SetShowMouseCursor(false);
-		}
-	}
 }
