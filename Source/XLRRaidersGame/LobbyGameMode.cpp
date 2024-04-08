@@ -20,7 +20,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 				1,
 				60.f,
 				FColor::Yellow,
-				FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers)
+				FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers - 1)
 			);
 
 			APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>();
