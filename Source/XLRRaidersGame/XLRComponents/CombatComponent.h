@@ -31,12 +31,22 @@ protected:
 
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 
+	UFUNCTION(Server, Reliable)
+	void ServerFire();
+
+	UFUNCTION(NetMulticast , Reliable)
+	void MulticastFire();
+
+
+
+
 private:
 	class ABlasterCharacter* Character;
 	class AWeapon* EquippedWeapon;
 
 	bool bFireButtonPressed;
 
+	FVector HitTarget;
 public:	
 	// Called every frame
 

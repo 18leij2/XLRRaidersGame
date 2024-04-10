@@ -19,6 +19,8 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,6 +33,8 @@ protected:
 	void FireButtonPressed();
 	void FireButtonReleased();
 
+	void EquipButtonPressed();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
@@ -40,7 +44,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UCombatComponent* Combat;
+
+	UPROPERTY(Replicated)
+	class AWeapon* OverlappingWeapon;
 public:	
-	
+	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon) { OverlappingWeapon = Weapon; }
 
 };

@@ -3,6 +3,7 @@
 
 #include "Weapon.h"
 #include "Components/SphereComponent.h"
+#include "XLRRaidersGame/Character/BlasterCharacter.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -34,7 +35,16 @@ void AWeapon::BeginPlay()
 	{
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnSphereOverlap);
+	}
+}
 
+void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
+	if (BlasterCharacter) 
+	{
+		BlasterCharacter->SetOverlappingWeapon(this);
 	}
 }
 
@@ -42,6 +52,11 @@ void AWeapon::BeginPlay()
 void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AWeapon::Fire(const FVector& HitTarget)
+{
 
 }
 

@@ -26,8 +26,20 @@ public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void Fire(const FVector& HitTarget);
+
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void OnSphereOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
 
 private: 
 
@@ -42,5 +54,6 @@ private:
 
 public:	
 	FORCEINLINE void SetWeaponState(EWeaponState State) { WeaponState = State; }
-
+	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 };

@@ -51,7 +51,28 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEQuip)
 void UCombatComponent::FireButtonPressed(bool bPressed)
 {
 	bFireButtonPressed = bPressed;
+
+	if (bFireButtonPressed)
+	{
+		ServerFire();
+	}	
 }
+
+void UCombatComponent::ServerFire_Implementation()
+{
+	MulticastFire();
+}
+
+void UCombatComponent::MulticastFire_Implementation()
+{
+	if (EquippedWeapon == nullptr) return;
+	if (Character)
+	{
+		EquippedWeapon->Fire(HitTarget);
+	}
+}
+
+
 
 void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
@@ -86,9 +107,11 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		if (!TraceHitResult.bBlockingHit)
 		{
 			TraceHitResult.ImpactPoint = End;
+			HitTarget = End;
 		}
 		else
 		{
+			HitTarget = TraceHitResult.ImpactPoint;
 			DrawDebugSphere(
 				GetWorld(),
 				TraceHitResult.ImpactPoint,
@@ -99,3 +122,5 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		}
 	}
 }
+
+
