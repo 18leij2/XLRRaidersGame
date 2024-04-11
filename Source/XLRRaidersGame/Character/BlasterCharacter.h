@@ -51,7 +51,8 @@ private:
 	UPROPERTY(Replicated)
 	class AWeapon* OverlappingWeapon;
 
-
+	UFUNCTION(Server, Reliable)
+	void ServerEquipButtonPressed();
 public:	
 	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon) { OverlappingWeapon = Weapon; }
 

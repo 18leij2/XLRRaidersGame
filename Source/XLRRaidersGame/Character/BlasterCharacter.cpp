@@ -134,9 +134,16 @@ void ABlasterCharacter::Tick(float DeltaTime)
 
 void ABlasterCharacter::EquipButtonPressed()
 {
-	if (Combat && HasAuthority())
+	if (Combat)
 	{
-		Combat->EquipWeapon(OverlappingWeapon);
+		if (HasAuthority())
+		{
+			Combat->EquipWeapon(OverlappingWeapon);
+		}
+		else
+		{
+			ServerEquipButtonPressed();
+		}
 	}
 }
 
@@ -145,3 +152,10 @@ void ABlasterCharacter::MulticastHit_Implementation()
 	//Call HitReaction Monatage
 }
 
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (Combat)
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
+}
