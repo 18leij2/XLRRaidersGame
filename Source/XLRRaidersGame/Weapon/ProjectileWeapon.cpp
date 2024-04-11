@@ -8,6 +8,8 @@
 void AProjectileWeapon::Fire(const FVector& HitTarget)
 {
 	Super::Fire(HitTarget); 
+
+	if (!HasAuthority()) return;
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
 	const USkeletalMeshSocket* BulletSpawnSocket = GetWeaponMesh()->GetSocketByName(FName("MuzzleFlash"));
 	if (BulletSpawnSocket)

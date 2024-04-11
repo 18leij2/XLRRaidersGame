@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "XLRRaidersGame/XLRComponents/CombatComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "XLRRaidersGame/XLRRaidersGame.h"
 
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
@@ -26,6 +27,8 @@ ABlasterCharacter::ABlasterCharacter()
 
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	Combat->SetIsReplicated(true);
+
+	GetMesh()->SetCollisionObjectType(ECC_SkeletalMesh);
 }
 
 // Called when the game starts or when spawned
@@ -135,5 +138,10 @@ void ABlasterCharacter::EquipButtonPressed()
 	{
 		Combat->EquipWeapon(OverlappingWeapon);
 	}
+}
+
+void ABlasterCharacter::MulticastHit_Implementation()
+{
+	//Call HitReaction Monatage
 }
 
