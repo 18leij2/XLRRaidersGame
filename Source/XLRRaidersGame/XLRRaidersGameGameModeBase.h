@@ -14,4 +14,6 @@ class XLRRAIDERSGAME_API AXLRRaidersGameGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+//public:
+//	AXLRRaidersGameGameModeBase();
 };
