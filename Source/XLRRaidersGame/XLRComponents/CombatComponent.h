@@ -37,11 +37,15 @@ protected:
 	UFUNCTION(NetMulticast , Reliable)
 	void MulticastFire();
 
+	void SetHUDCrosshairs(float DeltaTime);
+
 
 
 
 private:
 	class ABlasterCharacter* Character;
+	class ABlasterPlayerController* Controller;
+	class ABlasterHUD* HUD;
 	class AWeapon* EquippedWeapon;
 
 	bool bFireButtonPressed;
